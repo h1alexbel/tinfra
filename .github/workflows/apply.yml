@@ -28,7 +28,6 @@ jobs:
       - name: Terraform Apply
         uses: ./.github/apply
         with:
-          terraform_sa: ${{ env.TF_SA }}
           terraform_directory: "src"
           terraform_version: ${{ env.TERRAFORM_VERSION }}
           github_token: ${{ secrets.TOKEN }}
