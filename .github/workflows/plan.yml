@@ -1,0 +1,34 @@
+name: Terraform Plan
+on:
+  pull_request:
+env:
+  TERRAFORM_VERSION: "<Terraform version>"
+  TF_IN_AUTOMATION: "True"
+  # Here you can locate your integration credentials e.g. AWS, GCP, Azure, etc.
+  # it will be automatically injected inside the SHELL environment.
+  # examples:
+  # TF_VAR_credentials: ${{ secrets.GCLOUD_SERVICE_KEY }}
+  # TF_VAR_aws_access: ${{ secrets.AWS_ACCESS }}
+  # TF_VAR_aws_secret: ${{ secrets.AWS_SECRET }}
+jobs:
+  terraform_plan:
+    runs-on: ubuntu-22.04
+    if: github.event.review.state != 'approved'
+    steps:
+      - uses: actions/checkout@v3
+      - name: Get PR ID
+        id: pr-id
+        shell: bash
+        env:
+          GITHUB_REF: ${{ inputs.github_ref }}
+        run: |
+          PR_NUMBER=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
+      - name: Terraform Plan
+        uses: ./.github/plan
+        with:
+          terraform_directory: "src"
+          terraform_sa: ${{ env.TF_SA }}
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+          github_token: ${{ secrets.TOKEN }}
+          pr_id: ${{ steps.pr-id.outputs.PR_NUMBER }}
