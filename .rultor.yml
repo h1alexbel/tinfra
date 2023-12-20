@@ -1,0 +1,15 @@
+architect:
+  - <your gh name>
+install: |-
+  <software you need before merge/deploy/release stages>
+merge:
+  script: |-
+    <your merge script>
+deploy:
+  script: |-
+    <your deploy script>
+release:
+  script: |-
+    <your release script>
+stop: |-
+  exit -1
